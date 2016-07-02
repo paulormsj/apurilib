@@ -12,4 +12,6 @@ public interface IApuriUser {
     void setEmail(String email);
 
     IApuriUserData getUserData();
+
+    void setUserData(IApuriUserData value);
 }
