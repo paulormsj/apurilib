@@ -7,10 +7,12 @@ import apuri.com.br.apurilib.model.IApuriUser;
  * Created by paulo.junior on 02/07/2016.
  */
 public abstract class ApuriUserManagerObserverImpl implements ApuriUserManager.IApuriUserManagerObserver {
+
     public <T extends IApuriUser> void onCreateUser(T user) {
     }
 
     ;
+
 
     public void onFailCreateUser(ApuriUserException e) {
     }
@@ -24,4 +26,8 @@ public abstract class ApuriUserManagerObserverImpl implements ApuriUserManager.I
 
     public void onFailUserLogin(ApuriUserException e) {
     }
+
+    public <T extends  IApuriUser> void onFetchUserData(T user){}
+
+
 }
