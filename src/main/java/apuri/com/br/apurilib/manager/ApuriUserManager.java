@@ -24,6 +24,7 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
+import apuri.com.br.apurilib.ApuriLib;
 import apuri.com.br.apurilib.exceptions.ApuriUserException;
 import apuri.com.br.apurilib.model.IApuriUser;
 import apuri.com.br.apurilib.model.IApuriUserData;
@@ -32,44 +33,19 @@ import apuri.com.br.apurilib.model.IApuriUserData;
  * Created by paulo.junior on 01/07/2016.
  */
 @SuppressWarnings("unused")
-public final class ApuriUserManager implements  FirebaseAuth.AuthStateListener {
+public final class ApuriUserManager implements  FirebaseAuth.AuthStateListener, IApuriUserManager {
 
     public static final String USER_DATA_ENTRY = "userData";
     private static ApuriUserManager instance;
     private FirebaseAuth auth;
     private List<IApuriUserManagerObserver> observers;
     private IApuriUser currentUser;
-    private Context context;
-    Class<? extends  IApuriUser> userClass;
 
-    private ApuriUserManager(Context context){
-        auth = FirebaseAuth.getInstance();
-        auth.addAuthStateListener(this);
+
+    protected ApuriUserManager(FirebaseAuth auth){
+        this.auth = auth;
         observers = new ArrayList<>();
-        this.context = context;
-    }
 
-
-
-    public static void configure(Context context,Class<? extends  IApuriUser> userClass){
-        if(context == null)
-            throw new InvalidParameterException("Parameter context can not be null");
-        if(instance == null){
-            instance = new ApuriUserManager(context);
-        }else
-            throw new IllegalStateException("Already configured");
-         instance.userClass = userClass;
-    }
-
-    static void mockConfigure(MockContext context){
-
-    }
-
-    public static ApuriUserManager getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("Call configure first");
-        }
-        return instance;
     }
 
     void checkValidUserAndPassword(IApuriUser user, String password){
@@ -81,6 +57,7 @@ public final class ApuriUserManager implements  FirebaseAuth.AuthStateListener {
             throw new InvalidParameterException("User must have an email");
     }
 
+    @Override
     public void createUserWithPassword(final IApuriUser user, final String password){
 
         checkValidUserAndPassword(user,password);
@@ -111,7 +88,8 @@ public final class ApuriUserManager implements  FirebaseAuth.AuthStateListener {
         });
     }
 
-    public void loginUserWithEmailAndPassword(final String email, String password){
+    @Override
+    public void loginUserWithEmailAndPassword(final String email, String password,final Class<? extends  IApuriUser> userClass){
         if(email == null || email.isEmpty())
             throw new InvalidParameterException("Email can not be empty or null");
         if(password == null || password.isEmpty())
@@ -167,25 +145,29 @@ public final class ApuriUserManager implements  FirebaseAuth.AuthStateListener {
     private void setCurrentUser(IApuriUser user, AuthResult authResult) {
         this.currentUser = user;
         this.currentUser.setUid(authResult.getUser().getUid());
-        this.context.getSharedPreferences("conf",Context.MODE_APPEND)
+        ApuriLib.getContext().getSharedPreferences("conf",Context.MODE_APPEND)
                 .edit().putBoolean("hasUser",true).apply();
     }
 
+    @Override
     public boolean hasUser(){
-        SharedPreferences preferences = context.getSharedPreferences("conf",Context.MODE_APPEND);
+        SharedPreferences preferences = ApuriLib.getContext().getSharedPreferences("conf",Context.MODE_APPEND);
         return preferences.getBoolean("hasUser",false);
 
     }
 
+    @Override
     public <T extends  IApuriUser> T getUser(Class<T> clazz){
         return (T)this.currentUser;
     }
 
+    @Override
     public IApuriUser  getUser(){
         return this.currentUser;
     }
 
 
+    @Override
     public void addObserver(IApuriUserManagerObserver observer){
         if(observer == null)
             return;
@@ -193,6 +175,7 @@ public final class ApuriUserManager implements  FirebaseAuth.AuthStateListener {
             this.observers.add(observer);
     }
 
+    @Override
     public void removeObserver(IApuriUserManagerObserver observer){
         if (observer != null) {
             this.observers.remove(observer);
@@ -225,6 +208,7 @@ public final class ApuriUserManager implements  FirebaseAuth.AuthStateListener {
 
     }
 
+    @Override
     public void updateUserData(IApuriUserData userData) {
 
     }

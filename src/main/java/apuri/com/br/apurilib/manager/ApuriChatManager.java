@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,7 +25,7 @@ import apuri.com.br.apurilib.model.IApuriUser;
 /**
  * Created by paulo.junior on 03/07/2016.
  */
-public class ApuriChatManager {
+public class ApuriChatManager implements IApuriChatManager {
 
     public static final String CHATS_ENTRY = "chats";
     public static final String USERS_CHATS_ENTRY = "users_" + CHATS_ENTRY;
@@ -32,7 +33,12 @@ public class ApuriChatManager {
 
     private List<String> userChatRooms;
 
+    protected  ApuriChatManager(){
 
+    }
+
+
+    @Override
     public void createChat(IApuriChatRom rom, final IApuriChatRoomMembers members, IApuriChatMessage message) {
         if (rom == null)
             throw new InvalidParameterException("Parameter 'rom' can not be null");
@@ -43,10 +49,10 @@ public class ApuriChatManager {
 
         validateChatRom(rom);
 
-        ApuriUserManager userManager = null;
+        IApuriUserManager userManager = null;
 
         try{
-            userManager = ApuriUserManager.getInstance();
+            userManager = IApuriUserManager.Factory.getInstance();
         }catch (Exception e){
 
         }
@@ -72,6 +78,7 @@ public class ApuriChatManager {
 
     }
 
+    @Override
     public void sendMessage(String message, IApuriChatRom rom){
 
         if(userChatRooms.contains(rom.getKey())){
@@ -85,7 +92,7 @@ public class ApuriChatManager {
 
     private void checkPermissionToSendMessage(final String message,final IApuriChatRom rom) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(USERS_CHATS_ENTRY);
-        ref.child(ApuriUserManager.getInstance().getUser().getUid()).child(rom.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child(IApuriUserManager.Factory.getInstance().getUser().getUid()).child(rom.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null && (Boolean)dataSnapshot.getValue()){
@@ -104,8 +111,9 @@ public class ApuriChatManager {
         ref.child(rom.getKey()).push().child(message);
     }
 
+    @Override
     public void addMembersToChat(IApuriChatRom rom, List<IApuriUser> members){
-        IApuriUser user = ApuriUserManager.getInstance().getUser();
+        IApuriUser user = IApuriUserManager.Factory.getInstance().getUser();
         if(rom.getOwnerId().equals(user.getUid())){
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference(USERS_CHATS_ENTRY);
             Map<String, Object> creationMap = new HashMap<>();
