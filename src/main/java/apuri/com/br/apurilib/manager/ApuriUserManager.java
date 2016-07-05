@@ -181,6 +181,10 @@ public final class ApuriUserManager implements  FirebaseAuth.AuthStateListener {
         return (T)this.currentUser;
     }
 
+    public IApuriUser  getUser(){
+        return this.currentUser;
+    }
+
 
     public void addObserver(IApuriUserManagerObserver observer){
         if(observer == null)
