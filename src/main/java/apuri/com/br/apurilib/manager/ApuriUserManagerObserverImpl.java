@@ -6,7 +6,7 @@ import apuri.com.br.apurilib.model.IApuriUser;
 /**
  * Created by paulo.junior on 02/07/2016.
  */
-public abstract class ApuriUserManagerObserverImpl implements ApuriUserManager.IApuriUserManagerObserver {
+public abstract class ApuriUserManagerObserverImpl implements IApuriUserManagerObserver {
 
     public <T extends IApuriUser> void onCreateUser(T user) {
     }
