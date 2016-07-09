@@ -20,9 +20,9 @@ public interface IApuriUserManager {
 
     IApuriUser  getUser();
 
-    void addObserver(ApuriUserManager.IApuriUserManagerObserver observer);
+    void addObserver(IApuriUserManagerObserver observer);
 
-    void removeObserver(ApuriUserManager.IApuriUserManagerObserver observer);
+    void removeObserver(IApuriUserManagerObserver observer);
 
     void updateUserData(IApuriUserData userData);
 

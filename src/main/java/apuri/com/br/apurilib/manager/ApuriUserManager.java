@@ -213,13 +213,4 @@ public final class ApuriUserManager implements  FirebaseAuth.AuthStateListener, 
 
     }
 
-    public interface IApuriUserManagerObserver {
-         <T extends  IApuriUser> void onCreateUser(T user);
-         void onFailCreateUser(ApuriUserException e);
-         <T extends  IApuriUser> void onUserLogin(T user);
-        <T extends  IApuriUser> void onFetchUserData(T user);
-         void onFailUserLogin(ApuriUserException e);
-
-    }
-
 }

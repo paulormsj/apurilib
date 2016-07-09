@@ -16,7 +16,7 @@ public class ApuriLib {
 
     public static Context getContext(){
         if(ApuriLib.context == null)
-            throw new IllegalStateException("ApuriLib not configured");
+            throw new IllegalStateException("ApuriLib not configured. Call 'configure' first");
         return context;
     }
 
