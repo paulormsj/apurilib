@@ -1,13 +1,9 @@
 package apuri.com.br.apurilib.manager;
 
-import com.google.android.gms.tasks.RuntimeExecutionException;
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.List;
 
 import apuri.com.br.apurilib.model.IApuriChatMessage;
-import apuri.com.br.apurilib.model.IApuriChatRom;
-import apuri.com.br.apurilib.model.IApuriChatRoomMembers;
+import apuri.com.br.apurilib.model.IApuriChatRoom;
 import apuri.com.br.apurilib.model.IApuriUser;
 
 /**
@@ -15,11 +11,11 @@ import apuri.com.br.apurilib.model.IApuriUser;
  */
 public interface IApuriChatManager {
 
-    void createChat(IApuriChatRom rom, IApuriChatRoomMembers members, IApuriChatMessage message);
+    void createChat(IApuriChatRoom room, List<? extends IApuriUser> members, IApuriChatMessage message);
 
-    void sendMessage(String message, IApuriChatRom rom);
+    void sendMessage(IApuriChatMessage message, IApuriChatRoom room);
 
-    void addMembersToChat(IApuriChatRom rom, List<IApuriUser> members);
+    void addMembersToChat(IApuriChatRoom room, List<? extends IApuriUser> members);
 
     public final class Factory{
         private static IApuriChatManager instance;
